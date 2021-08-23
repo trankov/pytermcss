@@ -9,9 +9,9 @@ And, this library, which is currently under development, provides just one more 
 
 The principle of W3C CSS is simple. We describe a display pattern and give it a name. Then we mark with that name different parts of the text.
 
-In CSS, on the other hand, we can mark up the text directly in the line without creating a named template. This is so-called «inline styles».git
+In CSS, on the other hand, we can mark up the text directly in the line without creating a named template. This is so-called «inline styles».
 
-Python has many powerful tools for string formatting. On the other hand, visual formatting are not part of the standard library.
+Python has many powerful tools for string formatting. Nevertheless, visual formatting are not part of the standard library.
 
 Most of third-party libraries are designed to simplify operations with escape codes. In this project, the standard Python features and implicit terminal capabilities are combined as a single solution. We declare styles using both.
 
