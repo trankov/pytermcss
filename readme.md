@@ -1,4 +1,4 @@
-#
+# Python CSS-alike output library
 
 ## Introduction
 There are already many excellent libraries that implement the output of colored text in the terminal window. The beauty of the situation is that they all offer us different approaches. Everyone of us can choose to their liking.
