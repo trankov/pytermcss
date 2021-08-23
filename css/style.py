@@ -79,18 +79,15 @@ class Style(object):
 
 
     def color(self, color_code=0):
-        '''
-        Add one color value to template.
-          n = Style().color(Style.RED)
+        '''Add one 4-bit color value to template.'''
 
-        '''
         self._transform(color_code)
         return self
 
 
     def colors(self, *args):
         '''
-        Adding 16-bit color codes from `args` to template. You can send
+        Adding 4-bit color codes from `args` to template. You can send
         any number of parameters, but only two first of them will be taken.
           Style('green text on blue').color(Style.GREEN, Style.BG_BLUE)
 
