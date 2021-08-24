@@ -1,11 +1,18 @@
-import css
 import textwrap
+import locale
 
 from functools import partial
+
+import css
+
+
+locale.setlocale(locale.LC_ALL, 'RU_ru')
 
 blockquote = partial (textwrap.fill,
                       width=50, initial_indent=' >    ',
                       subsequent_indent = ' >  ', tabsize=4)
+
+money = partial (locale.currency, grouping=True, international=True)
 
 LF = css.LF
 
@@ -30,7 +37,7 @@ quote = css.style().fgrgb(100, 200, 35).italic.apply(blockquote)
 
 a = css.style().color(css.CYAN).underline
 
-
+cur = css.style().apply(lambda x: f'{money(float(x)):>20}').color(css.GREEN)
 
 if __name__ == '__main__':
 
@@ -67,3 +74,7 @@ if __name__ == '__main__':
 
     print(h2('Hyperlink-like'), LF)
     print(a('https://en.wikipedia.org/wiki/Hyperlink'), LF)
+
+    print(h2('Currency'), LF)
+
+    [print(cur(coin)) for coin in (127, 5, 2347.32, 2765789.58675)]

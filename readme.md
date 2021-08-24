@@ -77,7 +77,7 @@ i = css.style().italic
 bi = css.style().bold.italic
 ```
 
-The objects you created are callable. They take a string as a single parameter and apply the specified style to it.
+The objects you created are callable. They get a string as a single parameter and apply the specified style to it.
 
 ```python
 print(b('This text is bold.'))
@@ -243,13 +243,13 @@ There are three different ways to use colors in POSIX terminals. First, 16 color
 
 Colors could be applied to foreground and to background of string. Both colors may belong to different palettes at the same case.
 
-This library supports all palettes, with two methods for 16-color and three methods for 256 and RGB. Two methods are for foreground and background. They take only one parameter for you can use different palettes at the same style. And third method takes foreground and background parameters together. But both must be in the same palette.
+This library supports all palettes, with two methods for 16-color and three methods for 256 and RGB. Two methods are for foreground and background. They get only one parameter for you can use different palettes at the same style. And third method gets foreground and background parameters together. But both must be in the same palette.
 
 #### 16-colors palette:
  - `color(color_code: int)`
  - `colors(*args)`
 
-Actually, you can use only `colors` method, as it itakes any number of arguments, but using only first and second (if given). Foreground and background values for 16-colors palette has different numeric codes, so you can pass it in any оrder.
+Actually, you can use only `colors` method, as it takes any number of arguments, but using only first and second (if given). Foreground and background values for 16-colors palette has different numeric codes, so you can pass it in any оrder.
 
 Colors predefined constants keeping in `css` class, so you can invoke them as arguments.
 
@@ -311,6 +311,8 @@ Maybe some of color codes and typefaces will work in Windows terminals. I don't 
 
 ## Known limitations
 
+### Using style instanses in `*args`
+
 Because of the way the `print` function works, the following construction cannot be used:
 
 ```python
@@ -340,4 +342,53 @@ The solution is to use a **f-strings**. The single string is passed to the `prin
 ```python
 print (f'{example} {example.bold}')
 ```
-This usage works correctly and gives as a result we expected.
+This usage works correctly and gives us a result we expected.
+
+### Numeric issues in `apply` method
+
+When you create or call an object of `css.style`, any value passed converts to a string. When you operating with an object, you always mean a display representation via `__str__()` method.
+
+Some functions may not accept string arguments. They will raise an exception if you use them directly in `apply` method.
+
+The `apply` method was originally designed to operate with a string formatting, not for expression processing. The function you specify in the `apply` applies to the string value inside the object (which is provided by `text` property).
+
+When you meet an issue like that, you have to convert value to `int` or `float` directly. And only then call the function.
+
+For example, we want to write a style, which take on numbers and represent them as a currency according to local settings. Also we want it green and right-aligned in column.
+
+Look at this step by step:
+
+```python
+import locale
+import css
+
+from functools import partial
+
+locale.setlocale(locale.LC_ALL, 'RU_ru')
+currency = partial(locale.currency, grouping=True, international=True)
+```
+
+When you'll try to apply the style as follows, a `ValueError` will be raised:
+```python
+# This is a wrong way
+cur = css.style().apply(currency).color(css.GREEN)
+```
+
+But this style will work correctly:
+```python
+cur = css.style().apply(lambda x: currency(float(x))).color(css.GREEN)
+```
+Finally, let's make values aligned to right:
+
+```python
+cur = css.style().apply(lambda x: f'{currency(float(x)):>20}').color(css.GREEN)
+
+for income in (127, 5, 2347.32, 2765789.58675):
+    print(cur(income))
+
+#          127,00 RUB
+#            5,00 RUB
+#        2 347,32 RUB
+#    2 765 789,59 RUB
+```
+Excellent.
