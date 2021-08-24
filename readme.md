@@ -1,23 +1,43 @@
-# Python CSS-alike output library
+# Python CSS-alike text output
 
 ## Introduction
-There are already many excellent libraries that implement the output of colored text in the terminal window. The beauty of the situation is that they all offer us different approaches. Everyone of us can choose to their liking.
+This library helps to output formatted text into terminal window. It supports colors, typefaces and user-defined formatting functions.
 
-And, this library, which is currently under development, provides just one more approach. Which is seems most convenient to its author.
+There are already many excellent libraries that is very close. They all offer us different approaches and everyone of us can choose to their liking.
+
+This library provides just one more approach which is seems most convenient to its author.
 
 ## Essence of the approach
 
-The principle of W3C CSS is simple. We describe a display pattern and give it a name. Then we mark with that name different parts of the text.
+The library inherits principles of web CSS. We describe a display pattern and give it a name. Then we mark with that name different parts of the text.
 
-In CSS, on the other hand, we can mark up the text directly in the line without creating a named template. This is so-called «inline styles».
+```html
+<style>
+    .mytext {font-weight: bold; color: red}
+</style>
 
-Python has many powerful tools for string formatting. Nevertheless, visual formatting are not part of the standard library.
+Some text comes here, <span class="mytext">and part of it is red
+and bold</span>, so we can easy read and edit the HTML-code.
+```
 
-Most of third-party libraries are designed to simplify operations with escape codes. In this project, the standard Python features and implicit terminal capabilities are combined as a single solution. We declare styles using both.
+Also in CSS we can mark up text directly in the line without names. This is so-called «inline styles».
 
-Of course, this is not a literal implementation of CSS. It is not possible and it is not necessary. The goal of this project is that we can easily create patterns, easily implement them into printable strings, and they are easy to read in code.
+```html
+It is not recommended, <span style="font-weight: bold; color: red">but still possible</span>.
+```
+In the terminal window, a similar effect is realized by embedding [escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code) directly in the text. But the readability and usability of markup with this method is very difficult.
 
-Easy to write, easy to read and easy to understand.
+For example, if we want to print hyperlink underligned and in blue color, we must write something like this:
+```python
+print('Download Python: \x1b[1m\x1b[7mhttps://python.org/\x1b[m.')
+```
+Most of third-party libraries are designed to simplify operations with [escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code). Python's built-in string formatting methods are used as usual. After all, both are a way of displaying text. So why should we consider them separately?
+
+In this project, the standard Python features and implicit terminal capabilities are combined as a single solution. We can declare styles using both.
+
+Of course, this is not a literal implementation of CSS. It is not possible and it is not necessary.
+
+ The goal of this project is easy to write, easy to read and easy to understand.
 
 ## Installation
 
@@ -27,7 +47,7 @@ To be written.
 
 ### Chain of transformations
 
-The styles is organized through chain notation. It's easy to insert them directly into the lines you print.
+The styling is organized through chain notation. It's easy to insert them directly into the lines you print.
 
 ```python
 import css
@@ -41,11 +61,13 @@ print('And this is the',
       'text example.')
 ```
 
-You are responsible for the way your chain of transformation is organized. Conflicting instructions will lead to unpredictable results.
+You are self-responsible for the way your chain of transformation is organized. Conflicting instructions will lead to unpredictable results.
+
+But it's not hard at all. Just don't assign the same kind of formatting twice.
 
 ### Using strings with predefined styles
 
-To apply the same design style to different strings, create an object of class `css.style` with the desired set of parameters.
+To apply the same display style to different strings, create an object of class `css.style` with the desired set of parameters.
 
 ```python
 import css
@@ -63,7 +85,11 @@ print(i('And this one is italic.'))
 print(bi('This text is bold and italic.'))
 ```
 
-Note that the string you called with the object will be stored in `text` property until you assign a new value to it. If you want just print a random string usng the style but keeping the main text value unchanged, use `display()` method.
+Note that the string you called with the object will be stored in `text` property until you assign a new value to it. If you want just print a seldom string using the style but keeping the original text unchanged, use `display()` method.
+
+Most often in this case we have no need to save the last text value. But this is part of the functionality described in the next section.
+
+If you don't need to use the same text repeatedly, just don't worry about it and use the library as if this feature didn't exist.
 
 ```python
 print(b('This text is bold.'))
@@ -81,15 +107,15 @@ print(b('This text is still strong.'))
 print(b) # The value has been changed after call.
 ```
 
-This behavior is a bit of a Zen violation _(There should be one-- and preferably only one --obvious way to do it)_. You can change `text` property both by calling and by assigning. Alternatively, you can simply apply the style to a random string without changing the value of `text`.
+This behavior is a bit of a Zen violation _(There should be one-- and preferably only one --obvious way to do it)_. You can change `text` property both by calling and by assigning.
 
-Different approaches can be useful depending on the use. Only the same method cannot be equally suitable for fast scripting, prototyping or complex projects. Just keep to some unified way when you design your application.
+But different approaches can be useful depending on the use. Only the same method cannot be equally suitable for fast scripting, prototyping or complex projects. Just keep to some unified way when you design your application.
 
 ### Applying styles to predefined strings
 
 Sometimes you need the same style for different strings. But sometimes you need to print the same text in different styles. You can reassign the style template as so as you reassign the text.
 
-Before you can assign a new style at the object, you must clear the previous one. To do this, include the `clear()` method in your chain.
+Before you can assign a new style at the object, you must clear the previous one. To do this, include `clear()` method in your chain.
 
 ```python
 >>> text = css.style(' some text ')
@@ -119,9 +145,9 @@ Before you can assign a new style at the object, you must clear the previous one
 
 ### Using Python functions
 
-Yes, you can use functions in your styles declarations. It can be both built-in and your own.
+Yes, as was promised, you can use functions in your styles declarations. It can be both built-in and your own.
 
-To assing a function use the `apply` method.
+To assing a function use `apply` method.
 
 ```python
 import css
@@ -178,7 +204,7 @@ for i in range(5):
 #   • List item number 5
 ```
 
-When using templates, remember that you're not working with `str` objects, but with objects of the `css.style` class. This means that if you want to use nested formatting, you'll have to explicitly convert it to a string. The methods of the `str` class do not work with the string representation of objects returned by the `__str__` method. This applies in its entirety to the `str.format` method.
+When using templates, remember that you're not working with `<str>` objects, but with objects of the `<css.style>` class. This means that if you want to use nested formatting, you'll have to explicitly convert it to a string. The methods of the `str` class do not work with the string representation of objects returned by the `__str__` method. This applies in its entirety to the `str.format` method.
 
 ```python
 import css
@@ -188,7 +214,7 @@ class CSS():
     ol_li = css.style().apply(lambda x: '  {{:>02}} {}'.format(x))
 
     # Will be '  {:>02} text' after applying style,
-    # so we can use str.format() with it
+    # so we can use str.format() with it again.
 
 
 print('', 'Ordered list:', '-'*13, '', sep='\n')
@@ -215,15 +241,15 @@ for num, fruit in enumerate(('Apples', 'Peaches', 'Melons', 'Plums')):
 
 There are three different ways to use colors in POSIX terminals. First, 16 colors palette. Second, 256 colors palette. Third, full RGB color palette.
 
-Colors could be applied to foreground and to background of string. Both colors may belong to different palettes.
+Colors could be applied to foreground and to background of string. Both colors may belong to different palettes at the same case.
 
-This library supports all palettes, with two methods for 16-color and three methods for 256 and RGB. Two methods are for foreground and background. They takes only one parameter. And third method takes foreground and background parameters in the same palette.
+This library supports all palettes, with two methods for 16-color and three methods for 256 and RGB. Two methods are for foreground and background. They take only one parameter for you can use different palettes at the same style. And third method takes foreground and background parameters together. But both must be in the same palette.
 
 #### 16-colors palette:
  - `color(color_code: int)`
  - `colors(*args)`
 
-Actually, you can use only `colors` method, as it itakes any number of arguments, but using only first and second (if passed). Foreground and background values for 16-colors palette are different, so you can pass it in any оrder.
+Actually, you can use only `colors` method, as it itakes any number of arguments, but using only first and second (if given). Foreground and background values for 16-colors palette has different numeric codes, so you can pass it in any оrder.
 
 Colors predefined constants keeping in `css` class, so you can invoke them as arguments.
 
@@ -280,3 +306,38 @@ Not all terminals fully support these parameters.
 ## Nota Bene
 
 Different terminal programs and operating systems support different features and require different implementations. This problem has not been solved at the moment. The current implementation is only being developed for POSIX.
+
+Maybe some of color codes and typefaces will work in Windows terminals. I don't know.
+
+## Known limitations
+
+Because of the way the `print` function works, the following construction cannot be used:
+
+```python
+import css
+
+example = css.style('example')
+print(example, example.bold)
+```
+In this case both words will be printed in last formatting (in a bold typeface here).
+
+This is because both objects here are first processed before printing. Since the object saves the text and formatting pattern after each call, in this case all its instances will have the formatting and text value that was made last.
+
+However, the following example will print the lines as it was intended:
+```python
+import css
+
+example = css.style('example')
+print(example, '', end='')
+print(example.bold)
+```
+In the case above each transformation processed independently.
+
+The same problem occurs if we try to use a `format` method. Such line as `print('{} {}'.format(example, example.bold))` will give us as a result two bolded words.
+
+The solution is to use a **f-strings**. The single string is passed to the `print` function as a single argument. So `print` processed variables step-by-step in order as it given.
+
+```python
+print (f'{example} {example.bold}')
+```
+This usage works correctly and gives as a result we expected.

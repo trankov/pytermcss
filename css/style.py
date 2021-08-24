@@ -1,4 +1,11 @@
 class Style(object):
+    """
+    Wraps the given string with a set of
+    Escape Codes in accordance with the user
+    defined chain of transformations
+    """
+
+    # Collateral Functions
 
     def __init__(self, string = ''):
         self._result_string = str(string)
@@ -9,17 +16,34 @@ class Style(object):
         self._result_string = str(string)
         return self
 
+    def __str__(self):
+        if self._apply:
+            self._result_string = self._apply(self._result_string)
+        return '{}{}\033[m'.format(self._template, self._result_string)
+
+    def __repr__(self):
+        return self.__str__()
+
+
+    # Internal Functions
+
+    def _transform(self, transformation):
+        "Supplement the template with a new value"
+        self._template = '\033[{}m{}'.format(transformation, self._template)
+
+
+    # Tools for managing a common parameters
+
     def clear(self):
+        "Reset all style parameters."
+
         self._template = ''
         return self
 
-    def _transform(self, transformation):
-        '''Supplements the template with a new value'''
-        self._template = '\033[{}m{}'.format(transformation, self._template)
 
     @property
     def text(self):
-        '''Return the text which will be stylized'''
+        "Return the text meant to be stylized"
         return self._result_string
 
     @text.setter
@@ -27,10 +51,16 @@ class Style(object):
         self._result_string = str(value)
         return self
 
+
     def display(self, value=''):
+        "Apply current formatting to foreign text, keeping the original"
+
         if value:
             return '{}{}\033[m'.format(self._template, value)
         return self
+
+
+    # Lettering Functions
 
     @property
     def bold(self):
@@ -138,12 +168,3 @@ class Style(object):
         if callable(func_call):
             self._apply = func_call
         return self
-
-
-    def __str__(self):
-        if self._apply:
-            self._result_string = self._apply(self._result_string)
-        return '{}{}\033[m'.format(self._template, self._result_string)
-
-    def __repr__(self):
-        return self.__str__()
