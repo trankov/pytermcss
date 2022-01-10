@@ -9,7 +9,7 @@ This library provides just one more approach which is seems most convenient to i
 
 ## Essence of the approach
 
-The library inherits principles of web CSS. We describe a display pattern and give it a name. Then we mark with that name different parts of the text.
+The library inherits principles of web CSS. We describe a display pattern and give it a name. Then we mark with that name different parts of the text. Example:
 
 ```html
 <style>
@@ -20,7 +20,7 @@ Some text comes here, <span class="mytext">and part of it is red
 and bold</span>, so we can easy read and edit the HTML-code.
 ```
 
-Also in CSS we can mark up text directly in the line without names. This is so-called «inline styles».
+Also in CSS we can mark up text directly in the line without names. This is so-called «inline styles». Example:
 
 ```html
 It is not recommended, <span style="font-weight: bold; color: red">but still possible</span>.
@@ -31,7 +31,7 @@ For example, if we want to print hyperlink underligned and in blue color, we mus
 ```python
 print('Download Python: \x1b[1m\x1b[7mhttps://python.org/\x1b[m.')
 ```
-Most of third-party libraries are designed to simplify operations with [escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code). Python's built-in string formatting methods are used as usual. After all, both are a way of displaying text. So why should we consider them separately?
+Most of third-party libraries are designed to simplify operations with [escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code). And, Python's built-in string formatting methods are used as usual. After all, both are a way of displaying text. So why should we consider them separately?
 
 In this project, the standard Python features and implicit terminal capabilities are combined as a single solution. We can declare styles using both.
 
@@ -122,21 +122,22 @@ Before you can assign a new style at the object, you must clear the previous one
 ' some text '
 >>> text.rgbcolors((200,200,0), (0, 33, 128))
 # colored text output
->>>
->>>
->>> # You can clear the template and assign
->>> # a new one here on the same line
->>>
+
+
+# You can clear the template and assign
+# a new one here on the same line
+
 >>> text.clear().bg256(200)
 # output of recolored text
 >>> text.bold
 # The modification will be applied to the existing
 # ones because `clear()` method was ignored.
->>>
->>>
->>> # Also you can split the chain of transformations
->>> # into several lines for better readability
->>>
+
+
+
+# Also you can split the chain of transformations
+# into several lines for better readability
+
 >>> text.clear()
 ' some text '
 >>> text.colors(css.YELLOW, css.BG_RED).strike
@@ -153,7 +154,7 @@ To assing a function use `apply` method.
 import css
 
 
-# Let's begin to organize our style definitions
+# Let's begin to organize our style definitions in the class
 
 class CSS():
     h1 = css.style().\
@@ -193,7 +194,7 @@ for i in range(5):
     print(CSS.ul_li(f'List item number {i+1}'))
 
 
-#
+
 # Unsorted list:
 # --------------
 #
@@ -226,7 +227,7 @@ for num, fruit in enumerate(('Apples', 'Peaches', 'Melons', 'Plums')):
         ).format(num + 1)
     )
 
-#
+
 # Ordered list:
 # -------------
 #
@@ -254,10 +255,10 @@ Actually, you can use only `colors` method, as it takes any number of arguments,
 Colors predefined constants keeping in `css` class, so you can invoke them as arguments.
 
 ```python
->>> style.css('red text').color(css.RED)
->>> style.css('green background').color(css.BG_GREEN)
->>> style.css('red text at green background').colors(css.RED, css.BG_GREEN)
->>> style.css('red text at green background').color(css.RED).color(css.BG_GREEN)
+>>> css.style('red text').color(css.RED)
+>>> css.style('green background').color(css.BG_GREEN)
+>>> css.style('red text at green background').colors(css.RED, css.BG_GREEN)
+>>> css.style('red text at green background').color(css.RED).color(css.BG_GREEN)
 ```
 
 #### 256 colors palette:
@@ -268,9 +269,9 @@ Colors predefined constants keeping in `css` class, so you can invoke them as ar
  You can look at the color definitions [in Wikipedia](https://en.wikipedia.org/w/index.php?title=ANSI_escape_code&section=15#8-bit).
 
  ```python
- >>> style.css('red text').fg256(196)
- >>> style.css('green background').bg256(70)
- >>> style.css('red text at green background').colors256(196, 70)
+ >>> css.style('red text').fg256(196)
+ >>> css.style('green background').bg256(70)
+ >>> css.style('red text at green background').colors256(196, 70)
  ```
 
 #### True Color (RGB) palette:
@@ -282,9 +283,9 @@ Colors predefined constants keeping in `css` class, so you can invoke them as ar
 Usage examples:
 
 ```python
- >>> style.css('red text').fgrgb(255, 0, 0)
- >>> style.css('green background').bgrgb(0, 255, 0)
- >>> style.css('red text at green background').rgbcolors((255, 0, 0), (0, 255, 0))
+ >>> css.style('red text').fgrgb(255, 0, 0)
+ >>> css.style('green background').bgrgb(0, 255, 0)
+ >>> css.style('red text at green background').rgbcolors((255, 0, 0), (0, 255, 0))
  ```
 
 ### Typefaces
@@ -337,7 +338,7 @@ In the case above each transformation processed independently.
 
 The same problem occurs if we try to use a `format` method. Such line as `print('{} {}'.format(example, example.bold))` will give us as a result two bolded words.
 
-The solution is to use a **f-strings**. The single string is passed to the `print` function as a single argument. So `print` processed variables step-by-step in order as it given.
+The solution is to use **f-strings**. A single string is passed to the `print` function as a single argument. So `print` processed variables step-by-step in order as it given.
 
 ```python
 print (f'{example} {example.bold}')
@@ -350,25 +351,27 @@ When you create or call an object of `css.style`, any value passed converts to a
 
 Some functions may not accept string arguments. They will raise an exception if you use them directly in `apply` method.
 
-The `apply` method was originally designed to operate with a string formatting, not for expression processing. The function you specify in the `apply` applies to the string value inside the object (which is provided by `text` property).
+The `apply` method was originally designed to operate with a string formatting, not for numeric expression processing. The function you specify in the `apply` applies to the string value inside the declared object (which is provided by `text` property).
 
 When you meet an issue like that, you have to convert value to `int` or `float` directly. And only then call the function.
 
-For example, we want to write a style, which take on numbers and represent them as a currency according to local settings. Also we want it green and right-aligned in column.
+For example we want to define a style which take on numbers and represent them as a currency, according to local settings. Also we want it green, and right-aligned in column.
 
 Look at this step by step:
 
 ```python
 import locale
-import css
 
 from functools import partial
+
+import css
+
 
 locale.setlocale(locale.LC_ALL, 'RU_ru')
 currency = partial(locale.currency, grouping=True, international=True)
 ```
 
-When you'll try to apply the style as follows, a `ValueError` will be raised:
+If you try to apply the style as follows, a `ValueError` will be raised:
 ```python
 # This is a wrong way
 cur = css.style().apply(currency).color(css.GREEN)
@@ -376,11 +379,25 @@ cur = css.style().apply(currency).color(css.GREEN)
 
 But this style will work correctly:
 ```python
-cur = css.style().apply(lambda x: currency(float(x))).color(css.GREEN)
+cur = css.style().apply(
+          lambda x: currency(
+              float(x)
+          )
+       ).color(css.GREEN)
 ```
 Finally, let's make values aligned to right:
 
 ```python
+import locale
+
+from functools import partial
+
+import css
+
+
+locale.setlocale(locale.LC_ALL, 'RU_ru')
+currency = partial(locale.currency, grouping=True, international=True)
+
 cur = css.style().apply(lambda x: f'{currency(float(x)):>20}').color(css.GREEN)
 
 for income in (127, 5, 2347.32, 2765789.58675):
